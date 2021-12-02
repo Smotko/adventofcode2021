@@ -1,21 +1,29 @@
 import requests
 import percache
 import os
-import logging
+from bs4 import BeautifulSoup
+from rich.console import Console
 
 cache = percache.Cache(".cache")
+console = Console()
+
+URL = "https://adventofcode.com/2021"
 
 
-def error(*args):
-    logging.error(args if len(args) > 1 else args[0], stacklevel=3)
-
-
-def warning(*args):
-    logging.warning(args if len(args) > 1 else args[0], stacklevel=3)
-
-
-def info(*args):
-    logging.info(args if len(args) > 1 else args[0], stacklevel=3)
+@cache
+def submit(day: int, level: int, answer: any):
+    assert os.getenv(
+        "AOC_SESSION"
+    ), "Set the session cookie environment variable (export AOC_SESSION='your session cookie')"
+    console.log(f"Posting [bold]{answer}[/bold] for {day=} {level=}")
+    result = requests.post(
+        f"{URL}/day/{day}/answer",
+        dict(level=level, answer=answer),
+        cookies={"session": os.getenv("AOC_SESSION")},
+    )
+    assert result.status_code == 200, result.text
+    soup = BeautifulSoup(result.text, features="html.parser")
+    print(soup.body.main.article.prettify())
 
 
 @cache
@@ -23,9 +31,9 @@ def get_input(day, no_split=False):
     assert os.getenv(
         "AOC_SESSION"
     ), "Set the session cookie environment variable (export AOC_SESSION='your session cookie')"
-    warning("Fetching from server")
+    console.log("Fetching from server")
     result = requests.get(
-        f"https://adventofcode.com/2021/day/{day}/input",
+        f"{URL}/day/{day}/input",
         cookies={"session": os.getenv("AOC_SESSION")},
     )
     assert result.status_code == 200, result.text

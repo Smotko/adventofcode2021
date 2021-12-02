@@ -9,6 +9,8 @@ percache = "*"
 pytest = "*"
 pytest-watch = "*"
 black = "*"
+rich = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 

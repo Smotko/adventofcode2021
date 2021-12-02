@@ -1,5 +1,7 @@
+from rich.progress import track
+
 from dataclasses import dataclass
-from utils import get_input
+from utils import get_input, submit, console
 
 
 inp = get_input(2)
@@ -23,7 +25,7 @@ class Position:
     aim: int | None = None
 
 cur_pos = Position(horizontal=0, depth=0)
-for direction, amount in lines:
+for direction, amount in track(lines, "Solving 1"):
     match direction:
         case "down":
             cur_pos.depth += amount
@@ -31,11 +33,12 @@ for direction, amount in lines:
             cur_pos.depth -= amount
         case "forward":
             cur_pos.horizontal += amount
-print(cur_pos.horizontal * cur_pos.depth)
+console.print(":star:", cur_pos.horizontal * cur_pos.depth)
+submit(day=2, level=1, answer=cur_pos.horizontal * cur_pos.depth)
 
 
 cur_pos = Position(horizontal=0, depth=0, aim=0)
-for direction, amount in lines:
+for direction, amount in track(lines, "Solving 2"):
     match direction:
         case "down":
             cur_pos.aim += amount
@@ -44,4 +47,5 @@ for direction, amount in lines:
         case "forward":
             cur_pos.depth += cur_pos.aim * amount
             cur_pos.horizontal += amount
-print(cur_pos.horizontal * cur_pos.depth)
+console.print(":star::star:", cur_pos.horizontal * cur_pos.depth)
+submit(day=2, level=2, answer=cur_pos.horizontal * cur_pos.depth)
