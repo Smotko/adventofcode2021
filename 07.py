@@ -14,15 +14,21 @@ answer = int(sum([abs(i - target_pos) for i in inp]))
 console.log(f"{answer}")
 
 mn, mx = min(inp), max(inp)
-console.log(mn, mx)
 min_fuel = math.inf
 t = None
+
+crab_distances = dict()
+cur_distance = 0
+for distance in range(mx + 1):
+    cur_distance += distance
+    crab_distances[distance] = cur_distance
+
 for target_pos in track(range(mn, mx)):
     fuel = 0
     for crab in inp:
         distance = abs(crab - target_pos)
-        fuel += sum([i for i in range(distance + 1)])
+        fuel += crab_distances[distance]
     if fuel < min_fuel:
         min_fuel = fuel
         t = target_pos
-console.log(min_fuel, t)
+console.log(min_fuel)
